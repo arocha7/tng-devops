@@ -30,15 +30,18 @@
 - name: Configure insecure registry
   copy: src=docker.service dest=/lib/systemd/system/docker.service
  
-- name: Reload systemctl
-  command: systemctl daemon-reload
-  register: reloadout
+- name: Restart Docker engine
+  systemd: name=docker state=restarted daemon_reload=yes
 
-- debug: msg="Output {{ reloadout.stdout }}"
+#- name: Reload systemctl
+#  command: systemctl daemon-reload
+#  register: reloadout
 
-- debug: msg="Error {{ reloadout.stderr }}"
+#- debug: msg="Output {{ reloadout.stdout }}"
 
-- name: Restart docker
-  service: 
-    name: docker
-    state: restarted
+#- debug: msg="Error {{ reloadout.stderr }}"
+
+#- name: Restart docker
+#  service: 
+#    name: docker
+#    state: restarted

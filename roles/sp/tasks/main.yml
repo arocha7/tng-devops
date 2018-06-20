@@ -116,4 +116,4 @@
 
 - name: logout from private Registry
   docker_login:
-    state: present
+    state: absent
