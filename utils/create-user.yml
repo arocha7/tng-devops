@@ -1,0 +1,31 @@
+- hosts: "{{ target | default ('localhost') }}"
+  connection: local
+  gather_facts: no
+  become: yes
+  pre_tasks:
+    - debug: msg="##### START-DEPLOYMENT {{ lookup('pipe', 'date +%Y%m%d-%H:%M:%S') }}"
+  tasks:
+
+  - name: add user 'tango' with superuser priviledges on Debian machines
+    block:
+      - group:
+          name: tango
+          state: present
+      - group:
+          name: docker
+          state: present
+      - user:
+          name: "{{ sp_user }}"
+          comment: "5GTANGO application user"
+          shell: /bin/bash
+          group: tango
+          groups: sudo,docker
+          password: "{{ sp_pass }}"
+    #when: ansible_os_family == "Debian"
+
+  - name: remove password prompt for sudo
+    block:
+      - shell: "echo '%sudo ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers"
+      - shell: "echo 'ubuntu ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/90-cloud-init-users"
+    #when: ansible_os_family == "Debian"
+
