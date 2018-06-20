@@ -1,0 +1,11 @@
+---
+## Containers configuration
+# Docker Network
+docker_network_name: tango
+
+## Version
+## For now, qualification version = staging
+version: qual
+
+## Private Docker image repository
+repository: registry.sonata-nfv.eu:5000
