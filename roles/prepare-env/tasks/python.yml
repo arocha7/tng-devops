@@ -41,6 +41,7 @@
   shell: "pip install --upgrade"
 #  shell: "pip install --upgrade --force-reinstall pip==9.0.3"
 
+- pip: name=docker-py state=absent
 - name: Install 'docker' python module
   pip:
     name: docker
