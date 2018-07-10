@@ -5,7 +5,7 @@
 # Installing python dependencies
 
 - name: Install dependencies
-  apt: name={{ item }} state=installed
+  apt: name={{ item }} state=present
   with_items:
     - apt-transport-https
     - ca-certificates
@@ -38,10 +38,9 @@
   apt: name=python-pip state=present
 
 - name: upgrade PIP
-  shell: "pip install --upgrade"
+  shell: "pip install --upgrade pip"
 #  shell: "pip install --upgrade --force-reinstall pip==9.0.3"
 
-- pip: name=docker-py state=absent
 - name: Install 'docker' python module
   pip:
     name: docker

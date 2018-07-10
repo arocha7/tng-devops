@@ -26,7 +26,7 @@ qual-vnv-bcn.5gtango.eu ansible_user=tango component=all
 [sta-sp]
 sta-sp-ath.5gtango.eu ansible_user=tango component=all
 sta-sp-pad.5gtango.eu ansible_user=tango component=all
-sta-sp-ave.5gtango.eu ansible_user=tango component=all
+sta-sp-ave.5gtango.eu ansible_user=ubuntu component=all ansible_ssh_private_key_file='~/.ssh/tng-infra.pem'
 
 [sta-vnv]
 sta-vnv-ath.5gtango.eu ansible_user=tango component=all
