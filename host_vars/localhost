@@ -10,7 +10,11 @@ version: latest
 
 app_gk_base_url: http://qual-sp-ave.5gtango.eu:32002/api/v3
 routes_file: vnv_routes.yml
+unpackager_url: http://qual-sp-ave.5gtango.eu:5099/api/v1/packages
+catalogue_url: http://qual-sp-ave.5gtango.eu:4011/catalogues/api/v2
+repository_url: http://tng-rep:4012
 external_callback_url: http://tng-vnv-lcm:6100/api/v1/packages/on-change
+internal_callback_url: http://tng-vnv-lcm:6100/api/v1/packages/on-change
 
 component: all
 
@@ -36,6 +40,9 @@ urootpw: !vault |
 
 dbname: monitoring
 dbuser: monitoringuser
+
+# Ruby env
+rack_env : development
 
 # GATEKEEPER pgSQL database
 gtk_db_name: gatekeeper
