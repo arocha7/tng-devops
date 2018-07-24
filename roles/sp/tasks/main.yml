@@ -207,8 +207,8 @@
 #  when: target == 'sta-sp-ath.5gtango.eu'
 
 # Configuring Aveiro PoP
-#- import_tasks: add-aveiro-pop-vim-wim.yml
-#  when: target == 'sta-sp-ave'
+- import_tasks: add-aveiro-pop2-vim-wim.yml
+  when: target == 'sta-sp-ave'
 
 - name: log out of private Registry
   docker_login:
