@@ -22,23 +22,21 @@
     state: present
     update_cache: yes
 
+- name: Configure insecure registry
+  copy: src=docker.service dest=/lib/systemd/system/docker.service
+
+- pause: seconds=20
+
+- name: start Docker engine
+  systemd:
+    name: docker
+    state: started
+
+- pause: seconds=20
+
 - name: Create a docker network
   docker_network:
     name: "tango"
     state: present
-
-- name: Configure insecure registry
-  copy: src=docker.service dest=/lib/systemd/system/docker.service
- 
-- name: Reload systemctl
-  command: systemctl daemon-reload
-  register: reloadout
-
-- debug: msg="Output {{ reloadout.stdout }}"
-
-- debug: msg="Error {{ reloadout.stderr }}"
-
-- name: Restart docker
-  service: 
-    name: docker
-    state: restarted
+  notify:
+    - restart docker
