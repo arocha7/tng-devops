@@ -1,0 +1,131 @@
+---
+
+- name: to ensure that APT works with the HTTPS method and that CA certificates are installed
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+  - software-properties-common
+  - apt-transport-https
+  - ca-certificates
+  - curl
+
+- name: Install Docker dependency libraries
+  apt: name={{ item }} state=present update_cache=yes
+  with_items:
+  - apparmor
+  - aptitude
+  - python-apt
+  - python-dev
+  - python-httplib2
+  - python-keyczar
+  - python-pkg-resources
+  - git
+
+- name: install PIP
+  apt: name=python-pip state=present
+
+#- name: install required library
+#  pip: name={{ item }} state=present
+#  with_items:
+#  - jinja2
+#  - PyYAML
+#  - setuptools
+#  - pycrypto
+#  - six
+#  - requests
+#  - docker-py
+
+###
+
+- name: create Docker group
+  group:
+    name: docker
+    state: present
+
+- name: set default username
+  set_fact:
+    vm_user: ubuntu
+
+- name: add Docker group to default user
+  user:
+    name: "{{ vm_user }}"
+    shell: /bin/bash
+    groups: docker
+    append: yes
+
+- name: create a directory for Docker logging
+  file:
+    path: /var/log/docker
+    state: directory
+    owner: '{{ vm_user }}'
+    group: docker
+    mode: 0775
+
+###
+
+- name: remove deprecated Docker package
+  apt: name=lxc-docker state=absent
+
+- name: remove Docker package
+  apt: name="{{ item }}" state=absent
+  with_items:
+  - docker-engine
+  - docker-io
+
+- name: remove files and directories
+  file:
+    state: absent
+    path: "/var/lib/docker/"
+
+- name: remove deprecated Docker APT repository
+  apt_repository: repo="deb https://get.docker.com/ubuntu docker main" state=absent update_cache=no
+
+- name: remove deprecated Docker APT key
+  apt_key:
+    keyserver: keyserver.ubuntu.com
+    id: 36A1D7869245C8950F966E92D8576A8BA88D21E9
+    state: absent
+
+- name: remove Docker APT key
+  apt_key:
+    keyserver: p80.pool.sks-keyservers.net
+    id: 58118E89F3A912897C070ADBF76221572C52609D
+    state: absent
+
+- name: add official GPG key
+  apt_key:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+    state: present
+
+- name: get distro codename
+  command: "lsb_release -cs"
+  register: distro_codename
+
+- set_fact:
+    adistro={{ distro_codename.stdout }}
+
+- name: setup the stable Docker repository
+  apt_repository:
+    repo: 'deb [arch=amd64] https://download.docker.com/linux/ubuntu "{{ adistro }}" stable'
+    state: present
+    update_cache: yes
+
+- name: install Docker package
+  apt: name=docker-ce state=present
+
+- name: configuring Docker Options
+  copy: src=daemon.json dest=/etc/docker owner=root group=root mode=0644
+
+- name: start Docker engine
+  systemd:
+    name: docker
+    state: started
+    daemon_reload: yes
+    enabled: yes
+
+- name: create a docker network
+  docker_network:
+    name: "tango"
+    state: present
+  notify:
+    - restart docker

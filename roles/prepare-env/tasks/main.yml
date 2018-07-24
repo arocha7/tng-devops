@@ -1,8 +1,8 @@
 ---
 # Installing environment tools
-# Install python
-- import_tasks: python.yml
+# Install Python
+- import_tasks: "{{ lookup('env','PWD') }}/roles/prepare-env/tasks/python.yml"
 
 # Install Docker
-- import_tasks: docker.yml
+- import_tasks: "{{ lookup('env','PWD') }}/roles/prepare-env/tasks/docker.yml"
 
