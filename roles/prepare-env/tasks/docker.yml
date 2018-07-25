@@ -74,7 +74,7 @@
 - name: remove files and directories
   file:
     state: absent
-    path: "/var/lib/docker/"
+    path: "/var/lib/docker/*"
 
 - name: remove deprecated Docker APT repository
   apt_repository: repo="deb https://get.docker.com/ubuntu docker main" state=absent update_cache=no
